@@ -108,9 +108,6 @@
       }
     }
   },
-  "device": {
-    "name": "Dispositivo Feelfit"
-  },
   "state": {
     "unknown": "Sconosciuto"
   }
