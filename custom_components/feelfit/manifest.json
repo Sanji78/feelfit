@@ -9,7 +9,6 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/Sanji78/feelfit/issues",
   "loggers": ["custom_components.feelfit"],
-  "platforms": ["sensor"],
   "requirements": ["pycryptodome"],
   "version": "1.0.0"
 }
