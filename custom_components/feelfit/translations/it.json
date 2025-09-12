@@ -8,9 +8,6 @@
         "data": {
           "email": "Email",
           "password": "Password"
-        },
-        "errors": {
-          "auth": "Autenticazione non valida. Controlla email e password."
         }
       }
     }
