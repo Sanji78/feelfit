@@ -1,0 +1,117 @@
+{
+  "title": "Feelfit",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Feelfit",
+        "description": "Inserisci le credenziali del tuo account Feelfit per collegare Home Assistant.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "errors": {
+          "auth": "Autenticazione non valida. Controlla email e password."
+        }
+      }
+    }
+  },
+  "options": {
+    "advanced": {
+      "title": "Avanzate"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "account_name": {
+        "name": "Nome account"
+      },
+      "weight": {
+        "name": "Peso profilo"
+      },
+      "height": {
+        "name": "Altezza"
+      },
+      "birthday": {
+        "name": "Data di nascita"
+      },
+      "email": {
+        "name": "Email"
+      },
+      "goal_weight": {
+        "name": "Obiettivo: Peso"
+      },
+      "goal_bodyfat": {
+        "name": "Obiettivo: Grasso corporeo"
+      },
+      "goal_water": {
+        "name": "Obiettivo: Acqua"
+      },
+      "device_name": {
+        "name": "Dispositivo"
+      },
+      "measurement_weight": {
+        "name": "Peso"
+      },
+      "measurement_bodyfat": {
+        "name": "Grasso corporeo"
+      },
+      "measurement_bmi": {
+        "name": "BMI"
+      },
+      "measurement_bmr": {
+        "name": "BMR"
+      },
+      "measurement_bodyage": {
+        "name": "Età metabolica"
+      },
+      "measurement_fat_free_weight": {
+        "name": "Peso senza grasso"
+      },
+      "measurement_muscle": {
+        "name": "Muscolo (%)"
+      },
+      "measurement_protein": {
+        "name": "Proteine (%)"
+      },
+      "measurement_sinew": {
+        "name": "Tessuto connettivo (%)"
+      },
+      "measurement_subfat": {
+        "name": "Grasso sottocutaneo (%)"
+      },
+      "measurement_visfat": {
+        "name": "Grasso viscerale"
+      },
+      "measurement_water": {
+        "name": "Idratazione (%)"
+      },
+      "measurement_bone": {
+        "name": "Massa ossea"
+      },
+      "measurement_heart_rate": {
+        "name": "Frequenza cardiaca"
+      },
+      "measurement_score": {
+        "name": "Punteggio"
+      },
+      "measurement_time_stamp": {
+        "name": "Timestamp"
+      },
+      "measurement_body_water_mass": {
+        "name": "Massa acqua corporea"
+      },
+      "measurement_protein_mass": {
+        "name": "Massa proteica"
+      },
+      "measurement_body_fat_mass": {
+        "name": "Massa grassa corporea"
+      }
+    }
+  },
+  "device": {
+    "name": "Dispositivo Feelfit"
+  },
+  "state": {
+    "unknown": "Sconosciuto"
+  }
+}

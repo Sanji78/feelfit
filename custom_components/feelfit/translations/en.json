@@ -1,0 +1,117 @@
+{
+  "title": "Feelfit",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Feelfit",
+        "description": "Enter your Feelfit account credentials to connect Home Assistant.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "errors": {
+          "auth": "Invalid authentication. Please check your email and password."
+        }
+      }
+    }
+  },
+  "options": {
+    "advanced": {
+      "title": "Advanced"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "account_name": {
+        "name": "Account Name"
+      },
+      "weight": {
+        "name": "Profile Weight"
+      },
+      "height": {
+        "name": "Height"
+      },
+      "birthday": {
+        "name": "Birthday"
+      },
+      "email": {
+        "name": "Email"
+      },
+      "goal_weight": {
+        "name": "Goal: Weight"
+      },
+      "goal_bodyfat": {
+        "name": "Goal: Bodyfat"
+      },
+      "goal_water": {
+        "name": "Goal: Water"
+      },
+      "device_name": {
+        "name": "Device"
+      },
+      "measurement_weight": {
+        "name": "Weight"
+      },
+      "measurement_bodyfat": {
+        "name": "Bodyfat"
+      },
+      "measurement_bmi": {
+        "name": "BMI"
+      },
+      "measurement_bmr": {
+        "name": "BMR"
+      },
+      "measurement_bodyage": {
+        "name": "Metabolic Age"
+      },
+      "measurement_fat_free_weight": {
+        "name": "Fat Free Weight"
+      },
+      "measurement_muscle": {
+        "name": "Muscle (%)"
+      },
+      "measurement_protein": {
+        "name": "Protein (%)"
+      },
+      "measurement_sinew": {
+        "name": "Sinew (%)"
+      },
+      "measurement_subfat": {
+        "name": "Subcutaneous Fat (%)"
+      },
+      "measurement_visfat": {
+        "name": "Visceral Fat"
+      },
+      "measurement_water": {
+        "name": "Hydration (%)"
+      },
+      "measurement_bone": {
+        "name": "Bone Mass"
+      },
+      "measurement_heart_rate": {
+        "name": "Heart Rate"
+      },
+      "measurement_score": {
+        "name": "Score"
+      },
+      "measurement_time_stamp": {
+        "name": "Timestamp"
+      },
+      "measurement_body_water_mass": {
+        "name": "Body Water Mass"
+      },
+      "measurement_protein_mass": {
+        "name": "Protein Mass"
+      },
+      "measurement_body_fat_mass": {
+        "name": "Body Fat Mass"
+      }
+    }
+  },
+  "device": {
+    "name": "Feelfit Device"
+  },
+  "state": {
+    "unknown": "Unknown"
+  }
+}
