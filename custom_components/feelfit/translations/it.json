@@ -12,11 +12,6 @@
       }
     }
   },
-  "options": {
-    "advanced": {
-      "title": "Avanzate"
-    }
-  },
   "entity": {
     "sensor": {
       "account_name": {
