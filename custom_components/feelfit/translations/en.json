@@ -108,9 +108,6 @@
       }
     }
   },
-  "device": {
-    "name": "Feelfit Device"
-  },
   "state": {
     "unknown": "Unknown"
   }
