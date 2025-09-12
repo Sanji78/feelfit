@@ -12,11 +12,6 @@
       }
     }
   },
-  "options": {
-    "advanced": {
-      "title": "Advanced"
-    }
-  },
   "entity": {
     "sensor": {
       "account_name": {
