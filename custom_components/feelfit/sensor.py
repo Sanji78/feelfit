@@ -210,7 +210,7 @@ async def async_setup_entry(
                 ("fat_free_weight", "Fat Free Weight", KG_UNIT),
                 ("muscle", "Muscle (%)", PERCENT),
                 ("protein", "Protein (%)", PERCENT),
-                ("sinew", "Sinew", PERCENT),
+                ("sinew", "Sinew", KG_UNIT),
                 ("subfat", "Subcutaneous Fat (%)", PERCENT),
                 ("visfat", "Visceral Fat", None),
                 ("water", "Hydration (%)", PERCENT),
