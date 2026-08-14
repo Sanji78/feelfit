@@ -23,6 +23,7 @@ from .const import (
     PATH_GOALS,
     PATH_LOGIN,
     PATH_MEASUREMENTS,
+    PATH_GIRTHS,
     PATH_USER_SETTINGS,
     PUBLIC_KEY,
 )
@@ -44,6 +45,8 @@ class FeelfitApi:
         self.token_expires: float | None = None
         self.user_info: dict[str, Any] = {}
         self._last_measurements_meta: dict[str, dict[str, Any]] = {}
+        self._last_girths_meta: dict[str, dict[str, Any]] = {}
+        self._latest_girth_values: dict[str, dict[str, dict[str, Any]]] = {}
 
     def _build_url(self, path: str, extra_params: dict[str, str] | None = None) -> str:
         """Build URL with query parameters."""
@@ -245,6 +248,19 @@ class FeelfitApi:
         }
         return await self._get(PATH_MEASUREMENTS, extra)
 
+    async def async_get_girths(
+        self, user_id: str, last_updated_at: int = 0, last_girth_id: int | str = 0
+    ) -> dict[str, Any]:
+        """Get body girths/circumferences from API."""
+        if not self.token:
+            raise FeelfitApiError("Not authenticated")
+        extra = {
+            "user_id": user_id,
+            "last_updated_at": str(last_updated_at),
+            "last_girth_id": str(last_girth_id),
+        }
+        return await self._get(PATH_GIRTHS, extra)
+
     async def async_fetch_all(
         self, user_id: str, selected_profiles: list[str] | None = None
     ) -> dict[str, Any]:
@@ -307,6 +323,10 @@ class FeelfitApi:
 
             last_measurement_id = int(last_known_meta.get("last_measurement_id", 0) or 0)
 
+            girth_meta = self._last_girths_meta.get(profile_user_id, {})
+            girth_last_updated_at = int(girth_meta.get("last_updated_at") or 0)
+            girth_last_id = girth_meta.get("last_girth_id") or 0
+
             _LOGGER.debug(
                 "Profile %s measurements fetch: last_known=%s primary_ts=%s request=%s measurement_id=%s",
                 profile.get("account_name"),
@@ -324,12 +344,18 @@ class FeelfitApi:
                     last_updated_at=request_last_updated_at,
                     last_measurement_id=last_measurement_id,
                 ),
+                self.async_get_girths(
+                    profile_user_id,
+                    last_updated_at=girth_last_updated_at,
+                    last_girth_id=girth_last_id,
+                ),
             ]
             results = await asyncio.gather(*tasks, return_exceptions=True)
 
             user_settings: dict[str, Any] = {}
             goals: dict[str, Any] = {}
             measurements_data: dict[str, Any] = {}
+            girths_data: dict[str, Any] = {}
 
             for idx, res in enumerate(results):
                 if isinstance(res, Exception):
@@ -342,6 +368,8 @@ class FeelfitApi:
                     goals = res or {}
                 elif idx == 2:
                     measurements_data = res or {}
+                elif idx == 3:
+                    girths_data = res or {}
 
             measurements_list = measurements_data.get("measurements") or []
             if not measurements_list and primary_ts and primary_ts != last_known_updated_at:
@@ -383,6 +411,61 @@ class FeelfitApi:
 
             last_measurement = measurements_list[0] if measurements_list else None
 
+            # Merge girth records so every circumference keeps its newest value.
+            # Feelfit may return partial records (for example only one calf value).
+            girth_entries = girths_data.get("girth_ary") or []
+            latest_girths = self._latest_girth_values.setdefault(profile_user_id, {})
+
+            for girth_entry in girth_entries:
+                try:
+                    timestamp = int(girth_entry.get("time_stamp") or 0)
+                except (TypeError, ValueError):
+                    timestamp = 0
+
+                for girth in girth_entry.get("girth_values") or []:
+                    girth_name = girth.get("girth_name")
+                    value = girth.get("girth_value")
+                    if not girth_name or value is None:
+                        continue
+
+                    previous = latest_girths.get(girth_name) or {}
+                    try:
+                        previous_timestamp = int(previous.get("time_stamp") or 0)
+                    except (TypeError, ValueError):
+                        previous_timestamp = 0
+
+                    if not previous or timestamp >= previous_timestamp:
+                        latest_girths[girth_name] = {
+                            "value": value,
+                            "time_stamp": timestamp,
+                            "girth_id": girth.get("girth_id"),
+                            "girth_unit": girth.get("girth_unit"),
+                            "scale_name": girth_entry.get("scale_name"),
+                            "mac": girth_entry.get("mac"),
+                            "remark": girth_entry.get("remark"),
+                        }
+
+            deleted_girth_ids = {str(x) for x in (girths_data.get("deleted_girth_ids") or [])}
+            if deleted_girth_ids:
+                for girth_name, girth_data in list(latest_girths.items()):
+                    if str(girth_data.get("girth_id")) in deleted_girth_ids:
+                        latest_girths.pop(girth_name, None)
+
+            try:
+                returned_girth_updated_at = int(girths_data.get("last_updated_at") or 0)
+                returned_last_girth_id = girths_data.get("last_girth_id") or 0
+                girth_state = self._last_girths_meta.setdefault(profile_user_id, {})
+                if returned_girth_updated_at:
+                    girth_state["last_updated_at"] = returned_girth_updated_at
+                if returned_last_girth_id:
+                    girth_state["last_girth_id"] = returned_last_girth_id
+            except (TypeError, ValueError):
+                _LOGGER.debug(
+                    "Could not update girth metadata for profile %s from response: %s",
+                    profile.get("account_name"),
+                    girths_data,
+                )
+
             profile_data = {
                 "user_info": profile,
                 "user_settings": user_settings,
@@ -391,6 +474,12 @@ class FeelfitApi:
                     "last_measurement": last_measurement,
                     "measurements": measurements_list,
                     "last_updated_at": measurements_data.get("last_updated_at"),
+                },
+                "girths": {
+                    "latest": dict(latest_girths),
+                    "girth_ary": girth_entries,
+                    "last_updated_at": girths_data.get("last_updated_at"),
+                    "last_girth_id": girths_data.get("last_girth_id"),
                 },
             }
             all_profiles_data.append(profile_data)

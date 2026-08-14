@@ -20,14 +20,32 @@ from .const import CONF_SELECTED_PROFILES, DOMAIN, LOGGER, SCAN_INTERVAL
 _LOGGER = logging.getLogger(LOGGER)
 
 try:
-    from homeassistant.const import UnitOfMass
+    from homeassistant.const import UnitOfLength, UnitOfMass
     KG_UNIT = UnitOfMass.KILOGRAMS
+    CM_UNIT = UnitOfLength.CENTIMETERS
 except ImportError:
     KG_UNIT = "kg"
+    CM_UNIT = "cm"
 
 PERCENT = "%"
 KCAL = "kcal"
 BPM = "bpm"
+
+# Feelfit girth names mapped to user-facing English labels.
+GIRTH_SENSORS: list[tuple[str, str]] = [
+    ("sea_neck", "Neck"),
+    ("sea_shoulder", "Shoulders"),
+    ("sea_chest", "Chest"),
+    ("sea_abdomen", "Abdomen"),
+    ("sea_waist", "Waist"),
+    ("sea_hip", "Hips"),
+    ("sea_left_arm", "Left Arm"),
+    ("sea_right_arm", "Right Arm"),
+    ("sea_left_thigh", "Left Thigh"),
+    ("sea_right_thigh", "Right Thigh"),
+    ("sea_left_calf", "Left Calf"),
+    ("sea_right_calf", "Right Calf"),
+]
 
 def _map_date_format(fmt: str) -> str:
     """Map Feelfit date format to Python strftime format."""
@@ -241,6 +259,21 @@ async def async_setup_entry(
                         profile_user_id=profile_user_id,
                     )
                 )
+
+        # Create circumference sensors for every selected profile.
+        for girth_key, girth_label in GIRTH_SENSORS:
+            unique = f"{prefix}girth_{girth_key}"
+            name = f"{display_prefix}{girth_label}"
+            entities.append(
+                FeelfitGirthSensor(
+                    coordinator,
+                    entry.entry_id,
+                    unique,
+                    name,
+                    girth_key=girth_key,
+                    profile_user_id=profile_user_id,
+                )
+            )
 
     device_binds = (device_binds_payload or {}).get("device_binds") or []
     for idx, d in enumerate(device_binds):
@@ -794,6 +827,86 @@ class FeelfitMeasurementSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str,
         if not user_info:
             user_info = {}
 
+        user_id = user_info.get("user_id") or self._entry_id
+        return {
+            "identifiers": {(DOMAIN, f"user_{user_id}")},
+            "name": user_info.get("account_name") or f"Feelfit User {user_id}",
+            "manufacturer": "Feelfit",
+            "model": "Feelfit Account",
+        }
+
+
+class FeelfitGirthSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str, Any]]], SensorEntity):
+    """Sensor for Feelfit body circumference values."""
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[dict[str, Any]],
+        entry_id: str,
+        unique_key: str,
+        name: str,
+        girth_key: str,
+        profile_user_id: str | None = None,
+    ) -> None:
+        """Initialize the girth sensor."""
+        super().__init__(coordinator)
+        self._entry_id = entry_id
+        self._girth_key = girth_key
+        self._profile_user_id = profile_user_id
+        self._attr_unique_id = f"{entry_id}_{unique_key}_{profile_user_id or 'primary'}"
+        self._attr_name = name
+        self._attr_has_entity_name = True
+        self._attr_native_unit_of_measurement = CM_UNIT
+
+    def _get_girth(self) -> dict[str, Any] | None:
+        """Return latest cached girth value for the selected profile."""
+        profiles = (self.coordinator.data or {}).get("profiles") or []
+        for profile_data in profiles:
+            profile_info = profile_data.get("user_info") or {}
+            if self._profile_user_id and str(profile_info.get("user_id")) == str(self._profile_user_id):
+                latest = (profile_data.get("girths") or {}).get("latest") or {}
+                return latest.get(self._girth_key)
+        return None
+
+    @property
+    def native_value(self) -> float | None:
+        """Return circumference in centimeters."""
+        girth = self._get_girth()
+        if not girth or girth.get("value") is None:
+            return None
+        try:
+            return round(float(girth["value"]), 1)
+        except (TypeError, ValueError):
+            return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return Feelfit girth metadata."""
+        attrs: dict[str, Any] = {"source": "feelfit", "girth_name": self._girth_key}
+        girth = self._get_girth()
+        if not girth:
+            return attrs
+        for key in ("girth_id", "scale_name", "mac", "remark", "time_stamp"):
+            if girth.get(key) not in (None, ""):
+                attrs[key] = girth.get(key)
+        timestamp = girth.get("time_stamp")
+        if timestamp:
+            try:
+                attrs["measurement_time"] = datetime.fromtimestamp(int(timestamp)).isoformat()
+            except (TypeError, ValueError, OSError):
+                pass
+        return attrs
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Attach sensor to the same Feelfit profile device."""
+        profiles = (self.coordinator.data or {}).get("profiles") or []
+        user_info: dict[str, Any] = {}
+        for profile_data in profiles:
+            profile_info = profile_data.get("user_info") or {}
+            if self._profile_user_id and str(profile_info.get("user_id")) == str(self._profile_user_id):
+                user_info = profile_info
+                break
         user_id = user_info.get("user_id") or self._entry_id
         return {
             "identifiers": {(DOMAIN, f"user_{user_id}")},

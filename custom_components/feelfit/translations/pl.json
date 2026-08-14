@@ -3,11 +3,11 @@
   "config": {
     "step": {
       "user": {
-        "title": "Configure Feelfit",
-        "description": "Enter your Feelfit account credentials to connect Home Assistant.",
+        "title": "Konfiguracja Feelfit",
+        "description": "Podaj dane logowania do konta Feelfit, aby połączyć je z Home Assistant.",
         "data": {
-          "email": "Email",
-          "password": "Password"
+          "email": "E-mail",
+          "password": "Hasło"
         }
       }
     }
@@ -15,37 +15,37 @@
   "entity": {
     "sensor": {
       "account_name": {
-        "name": "Account Name"
+        "name": "Nazwa konta"
       },
       "weight": {
-        "name": "Profile Weight"
+        "name": "Waga profilu"
       },
       "height": {
-        "name": "Height"
+        "name": "Wzrost"
       },
       "birthday": {
-        "name": "Birthday"
+        "name": "Data urodzenia"
       },
       "email": {
-        "name": "Email"
+        "name": "E-mail"
       },
       "goal_weight": {
-        "name": "Goal: Weight"
+        "name": "Cel: waga"
       },
       "goal_bodyfat": {
-        "name": "Goal: Bodyfat"
+        "name": "Cel: tkanka tłuszczowa"
       },
       "goal_water": {
-        "name": "Goal: Water"
+        "name": "Cel: woda"
       },
       "device_name": {
-        "name": "Device"
+        "name": "Urządzenie"
       },
       "measurement_weight": {
-        "name": "Weight"
+        "name": "Waga"
       },
       "measurement_bodyfat": {
-        "name": "Bodyfat"
+        "name": "Tkanka tłuszczowa"
       },
       "measurement_bmi": {
         "name": "BMI"
@@ -54,85 +54,85 @@
         "name": "BMR"
       },
       "measurement_bodyage": {
-        "name": "Metabolic Age"
+        "name": "Wiek metaboliczny"
       },
       "measurement_fat_free_weight": {
-        "name": "Fat Free Weight"
+        "name": "Beztłuszczowa masa ciała"
       },
       "measurement_muscle": {
-        "name": "Muscle (%)"
+        "name": "Mięśnie (%)"
       },
       "measurement_protein": {
-        "name": "Protein (%)"
+        "name": "Białko (%)"
       },
       "measurement_sinew": {
-        "name": "Muscular Mass (Kg)"
+        "name": "Masa mięśniowa (kg)"
       },
       "measurement_subfat": {
-        "name": "Subcutaneous Fat (%)"
+        "name": "Tłuszcz podskórny (%)"
       },
       "measurement_visfat": {
-        "name": "Visceral Fat"
+        "name": "Tłuszcz trzewny"
       },
       "measurement_water": {
-        "name": "Hydration (%)"
+        "name": "Nawodnienie (%)"
       },
       "measurement_bone": {
-        "name": "Bone Mass"
+        "name": "Masa kostna"
       },
       "measurement_heart_rate": {
-        "name": "Heart Rate"
+        "name": "Tętno"
       },
       "measurement_score": {
-        "name": "Score"
+        "name": "Wynik"
       },
       "measurement_time_stamp": {
-        "name": "Timestamp"
+        "name": "Czas pomiaru"
       },
       "measurement_body_water_mass": {
-        "name": "Body Water Mass"
+        "name": "Masa wody w organizmie"
       },
       "measurement_protein_mass": {
-        "name": "Protein Mass"
+        "name": "Masa białka"
       },
       "measurement_body_fat_mass": {
-        "name": "Body Fat Mass"
+        "name": "Masa tkanki tłuszczowej"
       },
       "girth_sea_neck": {
-        "name": "Neck"
+        "name": "Szyja"
       },
       "girth_sea_shoulder": {
-        "name": "Shoulders"
+        "name": "Barki"
       },
       "girth_sea_chest": {
-        "name": "Chest"
+        "name": "Klatka piersiowa"
       },
       "girth_sea_abdomen": {
-        "name": "Abdomen"
+        "name": "Brzuch"
       },
       "girth_sea_waist": {
-        "name": "Waist"
+        "name": "Talia"
       },
       "girth_sea_hip": {
-        "name": "Hips"
+        "name": "Biodra"
       },
       "girth_sea_left_arm": {
-        "name": "Left Arm"
+        "name": "Lewe ramię"
       },
       "girth_sea_right_arm": {
-        "name": "Right Arm"
+        "name": "Prawe ramię"
       },
       "girth_sea_left_thigh": {
-        "name": "Left Thigh"
+        "name": "Lewe udo"
       },
       "girth_sea_right_thigh": {
-        "name": "Right Thigh"
+        "name": "Prawe udo"
       },
       "girth_sea_left_calf": {
-        "name": "Left Calf"
+        "name": "Lewa łydka"
       },
       "girth_sea_right_calf": {
-        "name": "Right Calf"
+        "name": "Prawa łydka"
       }
     }
   }
