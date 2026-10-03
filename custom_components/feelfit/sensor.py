@@ -5,7 +5,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -28,6 +28,10 @@ except ImportError:
 PERCENT = "%"
 KCAL = "kcal"
 BPM = "bpm"
+
+# Measurement keys that are not numeric values: they must NOT get a state_class
+# (a state_class on a non-numeric sensor makes Home Assistant log errors).
+NON_NUMERIC_MEASUREMENT_KEYS = {"time_stamp"}
 
 def _map_date_format(fmt: str) -> str:
     """Map Feelfit date format to Python strftime format."""
@@ -667,6 +671,11 @@ class FeelfitMeasurementSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str,
         self._measurement_key = measurement_key
         self._profile_user_id = profile_user_id
         self._attr_translation_key = f"measurement_{measurement_key}"
+        # Numeric measurements get a state_class so Home Assistant compiles
+        # long-term statistics (kept indefinitely, unaffected by recorder
+        # purge_keep_days) -> usable by history / ApexCharts "statistics".
+        if measurement_key not in NON_NUMERIC_MEASUREMENT_KEYS:
+            self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_has_entity_name = True
 
     @property
