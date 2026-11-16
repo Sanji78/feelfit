@@ -628,6 +628,7 @@ class FeelfitApi:
             elif idx == 2:
                 device_binds_data = res or {}
             elif idx == 3:
+                measurements_data = res or {}
                 
 
         measurements_list = measurements_data.get("measurements") or []
