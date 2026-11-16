@@ -31,6 +31,7 @@ PATH_USER_SETTINGS = "/user_settings/show_common_setting"
 PATH_GOALS = "/goals/list_goal"
 PATH_DEVICE_BINDS = "/device_binds/list_device_bind"
 PATH_MEASUREMENTS = "/measurements/list_measurement"
+PATH_GIRTHS = "/girths/list_girth"
 PATH_GET_PRIMARY_USER = "/users/get_primary_user"
 
 PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
