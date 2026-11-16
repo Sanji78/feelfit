@@ -9,7 +9,7 @@ import time
 import urllib.parse
 from typing import Any
 
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientError, ClientSession, ClientTimeout
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
@@ -114,22 +114,36 @@ class FeelfitApi:
         """Perform GET request to API."""
         url = self._build_url(path, extra_params)
         headers = {**COMMON_HEADERS, **self.auth_header()}
-        timeout = ClientTimeout(total=15)
+        timeout = ClientTimeout(total=30, connect=10)
 
-        try:
-            async with self._session.get(
-                url, headers=headers, timeout=timeout
-            ) as resp:
-                text = await resp.text()
-                if resp.status != 200:
-                    _LOGGER.error("GET %s returned %s: %s", url, resp.status, text)
-                    raise FeelfitApiError(f"HTTP {resp.status}: {text}")
-                result = await resp.json(content_type=None)
-        except FeelfitApiError:
-            raise
-        except Exception as exc:
-            _LOGGER.exception("Error while GET %s", url)
-            raise FeelfitApiError(str(exc)) from exc
+        result: Any = None
+        for attempt in (1, 2):
+            try:
+                async with self._session.get(
+                    url, headers=headers, timeout=timeout
+                ) as resp:
+                    text = await resp.text()
+                    if resp.status != 200:
+                        _LOGGER.error("GET %s returned %s: %s", path, resp.status, text)
+                        raise FeelfitApiError(f"HTTP {resp.status}: {text}")
+                    result = await resp.json(content_type=None)
+                break
+            except FeelfitApiError:
+                raise
+            except (asyncio.TimeoutError, ClientError) as exc:
+                if attempt == 1:
+                    _LOGGER.debug("GET %s failed (%r), retrying", path, exc)
+                    await asyncio.sleep(2)
+                    continue
+                _LOGGER.warning(
+                    "Feelfit cloud unreachable or slow (GET %s): %s",
+                    path,
+                    type(exc).__name__,
+                )
+                raise FeelfitApiError(f"{type(exc).__name__} on {path}") from exc
+            except Exception as exc:
+                _LOGGER.exception("Unexpected error while GET %s", path)
+                raise FeelfitApiError(str(exc)) from exc
 
         if isinstance(result, dict) and "data" in result:
             return result.get("data") or {}
