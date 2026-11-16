@@ -63,7 +63,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except FeelfitApiError as err:
         _LOGGER.debug("Initial fetch failed (will retry via coordinator): %s", err)
     except Exception as err:
-        _LOGGER.exception("Unexpected error during initial Feelfit fetch: %s", err)
+        _LOGGER.error("Unexpected error during initial Feelfit fetch: %r", err)
+        _LOGGER.debug("Initial fetch traceback", exc_info=True)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
