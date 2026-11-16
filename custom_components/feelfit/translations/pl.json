@@ -1,0 +1,139 @@
+{
+  "title": "Feelfit",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguracja Feelfit",
+        "description": "Podaj dane logowania do konta Feelfit, aby połączyć je z Home Assistant.",
+        "data": {
+          "email": "E-mail",
+          "password": "Hasło"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "account_name": {
+        "name": "Nazwa konta"
+      },
+      "weight": {
+        "name": "Waga profilu"
+      },
+      "height": {
+        "name": "Wzrost"
+      },
+      "birthday": {
+        "name": "Data urodzenia"
+      },
+      "email": {
+        "name": "E-mail"
+      },
+      "goal_weight": {
+        "name": "Cel: waga"
+      },
+      "goal_bodyfat": {
+        "name": "Cel: tkanka tłuszczowa"
+      },
+      "goal_water": {
+        "name": "Cel: woda"
+      },
+      "device_name": {
+        "name": "Urządzenie"
+      },
+      "measurement_weight": {
+        "name": "Waga"
+      },
+      "measurement_bodyfat": {
+        "name": "Tkanka tłuszczowa"
+      },
+      "measurement_bmi": {
+        "name": "BMI"
+      },
+      "measurement_bmr": {
+        "name": "BMR"
+      },
+      "measurement_bodyage": {
+        "name": "Wiek metaboliczny"
+      },
+      "measurement_fat_free_weight": {
+        "name": "Beztłuszczowa masa ciała"
+      },
+      "measurement_muscle": {
+        "name": "Mięśnie (%)"
+      },
+      "measurement_protein": {
+        "name": "Białko (%)"
+      },
+      "measurement_sinew": {
+        "name": "Masa mięśniowa (kg)"
+      },
+      "measurement_subfat": {
+        "name": "Tłuszcz podskórny (%)"
+      },
+      "measurement_visfat": {
+        "name": "Tłuszcz trzewny"
+      },
+      "measurement_water": {
+        "name": "Nawodnienie (%)"
+      },
+      "measurement_bone": {
+        "name": "Masa kostna"
+      },
+      "measurement_heart_rate": {
+        "name": "Tętno"
+      },
+      "measurement_score": {
+        "name": "Wynik"
+      },
+      "measurement_time_stamp": {
+        "name": "Czas pomiaru"
+      },
+      "measurement_body_water_mass": {
+        "name": "Masa wody w organizmie"
+      },
+      "measurement_protein_mass": {
+        "name": "Masa białka"
+      },
+      "measurement_body_fat_mass": {
+        "name": "Masa tkanki tłuszczowej"
+      },
+      "girth_sea_neck": {
+        "name": "Szyja"
+      },
+      "girth_sea_shoulder": {
+        "name": "Barki"
+      },
+      "girth_sea_chest": {
+        "name": "Klatka piersiowa"
+      },
+      "girth_sea_abdomen": {
+        "name": "Brzuch"
+      },
+      "girth_sea_waist": {
+        "name": "Talia"
+      },
+      "girth_sea_hip": {
+        "name": "Biodra"
+      },
+      "girth_sea_left_arm": {
+        "name": "Lewe ramię"
+      },
+      "girth_sea_right_arm": {
+        "name": "Prawe ramię"
+      },
+      "girth_sea_left_thigh": {
+        "name": "Lewe udo"
+      },
+      "girth_sea_right_thigh": {
+        "name": "Prawe udo"
+      },
+      "girth_sea_left_calf": {
+        "name": "Lewa łydka"
+      },
+      "girth_sea_right_calf": {
+        "name": "Prawa łydka"
+      }
+    }
+  }
+}
