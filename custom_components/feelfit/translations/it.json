@@ -97,6 +97,42 @@
       },
       "measurement_body_fat_mass": {
         "name": "Massa grassa corporea"
+      },
+      "girth_sea_neck": {
+        "name": "Collo"
+      },
+      "girth_sea_shoulder": {
+        "name": "Spalle"
+      },
+      "girth_sea_chest": {
+        "name": "Torace"
+      },
+      "girth_sea_abdomen": {
+        "name": "Addome"
+      },
+      "girth_sea_waist": {
+        "name": "Vita"
+      },
+      "girth_sea_hip": {
+        "name": "Fianchi"
+      },
+      "girth_sea_left_arm": {
+        "name": "Braccio sinistro"
+      },
+      "girth_sea_right_arm": {
+        "name": "Braccio destro"
+      },
+      "girth_sea_left_thigh": {
+        "name": "Coscia sinistra"
+      },
+      "girth_sea_right_thigh": {
+        "name": "Coscia destra"
+      },
+      "girth_sea_left_calf": {
+        "name": "Polpaccio sinistro"
+      },
+      "girth_sea_right_calf": {
+        "name": "Polpaccio destro"
       }
     }
   }
