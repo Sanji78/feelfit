@@ -61,8 +61,9 @@ class FeelfitConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except FeelfitApiError as exc:
                 _LOGGER.debug("Login attempt failed: %s", exc)
                 errors["base"] = "invalid_auth"
-            except Exception:
-                _LOGGER.exception("Unexpected exception")
+            except Exception as exc:
+                _LOGGER.error("Unexpected error in Feelfit config flow: %r", exc)
+                _LOGGER.debug("Config flow traceback", exc_info=True)
                 errors["base"] = "unknown"
             else:
 
@@ -227,7 +228,8 @@ class FeelfitOptionsFlowHandler(config_entries.OptionsFlow):
             self._all_profiles = await api.async_list_all_profiles()
 
         except Exception as exc:
-            _LOGGER.error("Failed to fetch profiles in options: %s", exc, exc_info=True)
+            _LOGGER.error("Failed to fetch profiles in options: %r", exc)
+            _LOGGER.debug("Options flow traceback", exc_info=True)
             return self.async_abort(reason="fetch_failed")
 
         if user_input is not None:
