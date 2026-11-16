@@ -844,6 +844,7 @@ class FeelfitMeasurementSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str,
             "model": "Feelfit Account",
         }
 
+
 class FeelfitGirthSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str, Any]]], SensorEntity):
     """Sensor for Feelfit body circumference values."""
 
