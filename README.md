@@ -21,7 +21,7 @@ This custom integration connects to **Feelfit Cloud** using your Feelfit account
   - Device info (model, brand, MAC, etc.)  
   - Last body measurement (weight, body fat, muscle, water, bone mass, heart rate, etc.)  
 - Each value is exposed as a **sensor entity**.  
-- Coordinator-based architecture (auto-refresh every 30 seconds).  
+- Coordinator-based architecture (auto-refresh every 2 minutes).  
 
 ---
 
@@ -62,7 +62,7 @@ This custom integration connects to **Feelfit Cloud** using your Feelfit account
 - **Last measurement sensors**
   - Weight, Body Fat, BMI, BMR, Metabolic Age, Muscle, Protein, Subcutaneous Fat, Visceral Fat, Hydration, Bone Mass, Heart Rate, Score, Measurement Timestamp, Body Water Mass, Protein Mass, Body Fat Mass  
 
-All entities are automatically updated every 30 seconds via a shared coordinator.
+All entities are automatically updated every 2 minutes via a shared coordinator.
 
 ---
 
