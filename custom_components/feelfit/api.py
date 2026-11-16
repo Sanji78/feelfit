@@ -44,6 +44,7 @@ class FeelfitApi:
         self.token_expires: float | None = None
         self.user_info: dict[str, Any] = {}
         self._last_measurements_meta: dict[str, dict[str, Any]] = {}
+        self._request_sem = asyncio.Semaphore(2)
 
     def _build_url(self, path: str, extra_params: dict[str, str] | None = None) -> str:
         """Build URL with query parameters."""
@@ -74,8 +75,15 @@ class FeelfitApi:
                 result = await resp.json(content_type=None)
         except FeelfitApiError:
             raise
+        except (asyncio.TimeoutError, ClientError) as exc:
+            _LOGGER.warning(
+                "Feelfit login failed: cloud unreachable or slow (%s)",
+                type(exc).__name__,
+            )
+            raise FeelfitApiError(f"{type(exc).__name__} on login") from exc
         except Exception as exc:
-            _LOGGER.exception("Error while calling Feelfit login endpoint")
+            _LOGGER.error("Unexpected error calling Feelfit login endpoint: %r", exc)
+            _LOGGER.debug("Login traceback", exc_info=True)
             raise FeelfitApiError(str(exc)) from exc
 
         if str(result.get("code")) not in ("200", "0"):
@@ -111,7 +119,14 @@ class FeelfitApi:
     async def _get(
         self, path: str, extra_params: dict[str, str] | None = None
     ) -> dict[str, Any]:
-        """Perform GET request to API."""
+        """Perform GET request to API (max 2 requests in flight)."""
+        async with self._request_sem:
+            return await self._do_get(path, extra_params)
+
+    async def _do_get(
+        self, path: str, extra_params: dict[str, str] | None = None
+    ) -> dict[str, Any]:
+        """Perform a single GET request with one retry on network errors."""
         url = self._build_url(path, extra_params)
         headers = {**COMMON_HEADERS, **self.auth_header()}
         timeout = ClientTimeout(total=30, connect=10)
@@ -142,7 +157,8 @@ class FeelfitApi:
                 )
                 raise FeelfitApiError(f"{type(exc).__name__} on {path}") from exc
             except Exception as exc:
-                _LOGGER.exception("Unexpected error while GET %s", path)
+                _LOGGER.error("Unexpected error while GET %s: %r", path, exc)
+                _LOGGER.debug("Traceback for GET %s", path, exc_info=True)
                 raise FeelfitApiError(str(exc)) from exc
 
         if isinstance(result, dict) and "data" in result:
@@ -347,7 +363,7 @@ class FeelfitApi:
 
             for idx, res in enumerate(results):
                 if isinstance(res, Exception):
-                    _LOGGER.error("Error fetching index %s for profile %s: %s",
+                    _LOGGER.debug("Fetch index %s for profile %s failed: %s",
                                 idx, profile.get("account_name"), res)
                     continue
                 if idx == 0:
@@ -514,7 +530,7 @@ class FeelfitApi:
 
         for idx, res in enumerate(results):
             if isinstance(res, Exception):
-                _LOGGER.error("Error fetching index %s: %s", idx, res)
+                _LOGGER.debug("Fetch index %s failed: %s", idx, res)
                 continue
             if idx == 0:
                 user_settings = res or {}
